@@ -25,12 +25,16 @@ public class Jake implements GameObject{
     private Color color;
     private Maze maze;
 
+    private String direction;
+    private Image graphics;
+
     public Jake(Point position, Maze maze)
     {
         X = position.x;
         Y = position.y;
-        color = Color.BLUE;
         this.maze = maze;
+        color = Color.BLUE;
+        direction = "RIGHT";
     }
 
     public void update(KeyCode keyPressed) {
@@ -41,16 +45,20 @@ public class Jake implements GameObject{
         switch (keyPressed)
         {
             case DOWN:
-                if (!((Y + 1) >= Controller.sceneInfo.getHeight()) && maze.isTileWalkAble(X, Y + 1)) { Y++; }
+                if (!((Y + 1) >= Controller.sceneInfo.getHeight()) && maze.isTileWalkAble(X, Y + 1)) {
+                    Y++; direction = "DOWN"; }
                 break;
             case LEFT:
-                if (!((X - 1) < 0) && maze.isTileWalkAble(X - 1, Y)) { X--; }
+                if (!((X - 1) < 0) && maze.isTileWalkAble(X - 1, Y)) {
+                    X--; direction = "LEFT"; }
                 break;
             case RIGHT:
-                if (!((X + 1) >= Controller.sceneInfo.getWidth()) && maze.isTileWalkAble(X + 1, Y)) { X++; }
+                if (!((X + 1) >= Controller.sceneInfo.getWidth()) && maze.isTileWalkAble(X + 1, Y)) {
+                    X++; direction = "RIGHT"; }
                 break;
             case UP:
-                if (!((Y - 1) < 0) && maze.isTileWalkAble(X, Y - 1)) { Y--; }
+                if (!((Y - 1) < 0) && maze.isTileWalkAble(X, Y - 1)) {
+                    Y--; direction = "UP"; }
                 break;
         }
     }
@@ -61,11 +69,8 @@ public class Jake implements GameObject{
 
         g.clearRect(old_X * sceneInfo.getFieldWidth(), old_Y * sceneInfo.getFieldHeight(), sceneInfo.getFieldWidth(), sceneInfo.getFieldHeight());
 
-        // g.setFill(color);
-        // g.fillRoundRect(this.getX() * sceneInfo.getFieldWidth(), this.getY() * sceneInfo.getFieldHeight(), sceneInfo.getFieldWidth(), sceneInfo.getFieldHeight(), 3, 3);
-
-        Image test = new Image("MazeRunnerGraphics/pac_R.png");
-        g.drawImage(test, this.getX() * sceneInfo.getFieldWidth(), this.getY() * sceneInfo.getFieldHeight(), sceneInfo.getFieldWidth(), sceneInfo.getFieldHeight());
+        setGraphics();
+        g.drawImage(graphics, this.getX() * sceneInfo.getFieldWidth(), this.getY() * sceneInfo.getFieldHeight(), sceneInfo.getFieldWidth(), sceneInfo.getFieldHeight());
     }
 
     public int getX() {
@@ -80,5 +85,22 @@ public class Jake implements GameObject{
 
     public void setY(int y) {
         Y = y;
+    }
+
+    void setGraphics() {
+        switch (direction) {
+            case "DOWN":
+                graphics = new Image("MazeRunnerGraphics/pac_D.png");
+                break;
+            case "LEFT":
+                graphics = new Image("MazeRunnerGraphics/pac_L.png");
+                break;
+            case "RIGHT":
+                graphics = new Image("MazeRunnerGraphics/pac_R.png");
+                break;
+            case "UP":
+                graphics = new Image("MazeRunnerGraphics/pac_U.png");
+                break;
+        }
     }
 }

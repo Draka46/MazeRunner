@@ -8,8 +8,8 @@ import java.util.Random;
 public class SceneInfo {
     private double fieldHeight;
     private double fieldWidth;
-    private int width = 30;
-    private int height = 20;
+    private int width = 32;
+    private int height = 31;
     private Random random = new Random();
 
     public SceneInfo(Canvas canvas)

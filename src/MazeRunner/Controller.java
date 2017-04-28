@@ -17,6 +17,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
 
 import java.awt.*;
 import java.util.*;
@@ -36,30 +37,8 @@ public class Controller {
 
     public static ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
     public static ArrayList<Tile> tileList = new ArrayList<Tile>();
-    public static Jake jake;
 
-    /** Currently utilized maze, expressed in binary
-     * 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-     * 0 0 0 1 0 1 0 0 1 0 1 1 1 1 1 0 0 0 0 1 0 0 0 1 0 0 0 0 1 0
-     * 0 1 1 1 0 1 0 0 1 0 1 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 0
-     * 0 0 0 1 0 1 0 0 1 0 1 0 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 1 0
-     * 0 1 1 1 0 1 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 1 0 1 1 1 1 0 1 1
-     * 0 1 0 0 0 0 0 0 1 0 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 0 1 0 0 0
-     * 0 1 1 1 1 1 1 1 1 0 0 0 0 1 0 1 0 0 0 0 0 1 0 1 0 0 1 1 1 0
-     * 0 0 0 0 0 0 0 0 1 0 1 1 1 1 0 1 0 1 0 1 1 1 0 1 0 0 0 0 0 0
-     * 1 1 1 1 1 1 1 0 1 0 0 0 0 1 0 1 0 1 0 1 0 0 0 1 0 1 1 1 1 1
-     * 0 0 0 0 0 0 0 0 1 1 1 1 0 1 0 1 1 1 0 1 0 1 1 1 1 1 0 0 0 1
-     * 0 1 1 1 0 1 0 0 0 0 0 0 0 1 0 0 1 0 0 1 0 0 0 0 0 0 0 1 0 1
-     * 0 1 0 0 0 1 1 1 1 1 1 1 0 1 0 0 1 0 1 1 1 1 1 1 1 1 0 1 0 1
-     * 0 1 0 1 0 1 0 0 0 0 0 0 0 1 0 0 1 0 1 0 0 0 0 0 0 1 0 1 0 1
-     * 0 1 0 1 0 1 0 1 1 1 1 1 1 1 0 0 1 0 1 0 1 1 1 0 0 1 0 1 0 1
-     * 0 1 0 1 0 1 0 0 0 0 0 0 0 0 0 0 1 0 1 0 1 0 1 0 1 1 1 1 0 1
-     * 0 1 0 1 0 1 1 1 1 1 1 1 1 1 1 0 1 0 1 0 0 0 1 0 0 0 0 1 0 0
-     * 0 1 0 1 0 0 0 0 0 1 0 0 0 0 0 0 1 0 1 0 1 1 1 1 1 1 1 1 1 0
-     * 0 1 0 1 0 1 1 1 1 1 0 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1
-     * 1 1 0 1 0 0 0 0 0 1 0 1 1 1 1 0 1 0 1 1 1 1 1 1 1 1 1 0 0 0
-     * 0 0 0 1 0 1 1 1 0 1 0 0 1 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0
-     */
+    public static Jake jake;
 
     public void btnStartAction(ActionEvent event)
     {
@@ -75,8 +54,11 @@ public class Controller {
 
         maze = new Maze(sceneInfo, this); // Sets up the maze
 
-        jake = new Jake(new Point(0, 0), maze); // Sets up the player character "Jake"
+        jake = new Jake(new Point(1, 1), maze); // Sets up the player character "Jake"
         gameObjects.add(jake);
+
+        Enemy enemy = new Enemy(Color.RED, 31, 30);
+        gameObjects.add(enemy);
 
         // Draws Maze (once and only once)
         GraphicsContext g = canvas.getGraphicsContext2D();

@@ -13,8 +13,8 @@ import javafx.scene.paint.Color;
 
 public class Tile{
     private Color color = Color.BLACK;
-    private int X;
-    private int Y;
+    public int X;
+    public int Y;
     public boolean walkAble;
 
     public Tile(int x, int y, boolean walkAble) {

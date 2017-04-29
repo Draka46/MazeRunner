@@ -57,7 +57,7 @@ public class Controller {
         jake = new Jake(new Point(1, 1), maze); // Sets up the player character "Jake"
         gameObjects.add(jake);
 
-        Enemy enemy = new Enemy(Color.RED, 31, 30);
+        Enemy enemy = new Enemy(Color.RED, 5, 5, jake);
         gameObjects.add(enemy);
 
         // Draws Maze (once and only once)

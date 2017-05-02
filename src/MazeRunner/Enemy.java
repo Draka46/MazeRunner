@@ -75,6 +75,7 @@ public class Enemy implements GameObject {
 
         closedList.add(Maze.tileList[X][Y]);
 
+        // Generates the A* algorithmic path (adjacent tile to goal tile)
         while (!pathFound) {
             // Update the open list
             ArrayList<Tile> tempOpenList = new ArrayList<>(openList);
@@ -103,19 +104,19 @@ public class Enemy implements GameObject {
 
             // Update the closed list
             int bestF_Cost = Integer.MAX_VALUE;
-            Tile bestTile = null;
-            for (int j = 0; j < sceneInfo.getWidth(); j++) {
-                for (int k = 0; k < sceneInfo.getHeight(); k++) {
-                    int temp = 0;
-                    temp = fCostList[j][k];
-                    if (temp != 0 && temp < bestF_Cost && openList.contains(Maze.tileList[j][k])) {
-                        bestF_Cost = temp;
-                        bestTile = Maze.tileList[j][k];
-                    }
+            Tile bestTileA = null;
+
+            for (int i = 0; i < openList.size(); i++) {
+                Tile tile = openList.get(i);
+                int temp = 0;
+                temp = fCostList[tile.X][tile.Y];
+                if ((temp != 0 && temp < bestF_Cost) || (tile.X == jake.getX() && tile.Y == jake.getY())) {
+                    bestF_Cost = temp;
+                    bestTileA = tile;
                 }
             }
-            closedList.add(bestTile);
-            openList.remove(bestTile);
+            closedList.add(bestTileA);
+            openList.remove(bestTileA);
 
             // Check for whether beta-path construction is finished
             for (int i = 0; i < closedList.size(); i++) {
@@ -123,43 +124,44 @@ public class Enemy implements GameObject {
 
                 if (tile.X == jake.getX() && tile.Y == jake.getY())
                     pathFound = true;
-
-                /*
-                for (int j = 0; j < nextTileAInt; j++) {
-                    Tile tileA = nextTileA(j, tile);
-
-                    if (tileA.X == jake.getX() && tileA.Y == jake.getY())
-                        pathFound = true;
-                }
-                */
             }
         }
 
-        // Construct final path (from target and back)
+        // Construct functional path (from goal tile to adjacent), removing unnecessary tiles
         pathFound = false;
         Collections.reverse(closedList);
         path.add(closedList.get(0));
 
-        while (!pathFound) {
-            for (int i = 0; i < path.size(); i++) {
-                Tile tile = closedList.get(i);
+        for (int i = 0; i < path.size(); i++) {
+            int bestF_Cost = Integer.MAX_VALUE;
+            Tile bestTileA = null;
+            Tile tile = path.get(i);
 
-                for (int j = 0; j < nextTileAInt; j++) {
-                    Tile tileA = nextTileA(j, tile);
+            for (int j = 0; j < nextTileAInt; j++) {
+                Tile tileA = nextTileA(j, tile);
 
-                    if (tile.X == tileA.X && tile.Y == tileA.Y) {
-                        if (!path.contains(tileA) && closedList.contains(tileA)) {
+                if (tile.X != tileA.X || tile.Y != tileA.Y) {
+                    if (!path.contains(tileA) && closedList.contains(tileA)) {
 
-                            int h_Cost = Math.abs(X - tileA.X);    // 'Cost' (distance) from tile, to goal (h_Cost + g_Cost)
-                            int g_Cost = Math.abs(Y - tileA.Y);    // Horizonal distance to goal
-                            int f_Cost = h_Cost + g_Cost;          // Vertical distance to goal
+                        int h_Cost = Math.abs(X - tileA.X);
+                        int g_Cost = Math.abs(Y - tileA.Y);
+                        int f_Cost = h_Cost + g_Cost;
 
-                            if (f_Cost < fCostList[tileA.X][tileA.Y])
-                                fCostList[tileA.X][tileA.Y] = f_Cost;
+                        if (f_Cost < bestF_Cost) {
+                            bestF_Cost = f_Cost;
+                            bestTileA = tileA;
                         }
-                        path.add(tileA);
                     }
                 }
+            }
+
+            if (bestTileA.X == X && bestTileA.Y == Y) {
+                pathFound = true;
+            }
+
+            if (bestTileA != null && !pathFound) {
+                if (bestTileA.X != jake.getX() || bestTileA.Y != jake.getY())
+                    path.add(bestTileA);
             }
         }
 
@@ -175,41 +177,49 @@ public class Enemy implements GameObject {
                     if (Maze.isTileWalkAble(tile.X + 1, tile.Y))   // Checks that the adjacent tile isn't a wall
                         return Maze.tileList[tile.X + 1][tile.Y];
                 }
+                break;
             case 1:
-                if (tile.Y-1 != sceneInfo.getHeight()) {
+                if (tile.Y-1 > 0) {
                     if (Maze.isTileWalkAble(tile.X, tile.Y - 1))
                         return Maze.tileList[tile.X][tile.Y - 1];
                 }
+                break;
             case 2:
-                if (tile.X-1 != sceneInfo.getWidth()) {
+                if (tile.X-1 > 0) {
                     if (Maze.isTileWalkAble(tile.X - 1, tile.Y))
                         return Maze.tileList[tile.X - 1][tile.Y];
                 }
+                break;
             case 3:
                 if (tile.Y+1 != sceneInfo.getWidth()) {
                     if (Maze.isTileWalkAble(tile.X, tile.Y + 1))
                         return Maze.tileList[tile.X][tile.Y + 1];
                 }
+                break;
             case 4:
                 if (tile.X+1 != sceneInfo.getWidth() && tile.Y+1 != sceneInfo.getHeight()) {
                     if (Maze.isTileWalkAble(tile.X + 1, tile.Y + 1))
                         return Maze.tileList[tile.X + 1][tile.Y + 1];
                 }
+                break;
             case 5:
-                if (tile.X-1 != sceneInfo.getWidth() && tile.Y+1 != sceneInfo.getHeight()) {
+                if (tile.X-1 > 0 && tile.Y+1 != sceneInfo.getHeight()) {
                     if (Maze.isTileWalkAble(tile.X - 1, tile.Y + 1))
                         return Maze.tileList[tile.X - 1][tile.Y + 1];
                 }
+                break;
             case 6:
-                if (tile.X-1 != sceneInfo.getWidth() && tile.Y-1 != sceneInfo.getHeight()) {
+                if (tile.X-1 > 0 && tile.Y-1 > 0) {
                     if (Maze.isTileWalkAble(tile.X - 1, tile.Y - 1))
                         return Maze.tileList[tile.X - 1][tile.Y - 1];
                 }
+                break;
             case 7:
-                if (tile.X+1 != sceneInfo.getWidth() && tile.Y-1 != sceneInfo.getHeight()) {
+                if (tile.X+1 != sceneInfo.getWidth() && tile.Y-1 > 0) {
                     if (Maze.isTileWalkAble(tile.X + 1, tile.Y - 1))
                         return Maze.tileList[tile.X + 1][tile.Y - 1];
                 }
+                break;
         }
 
         return tile;
